@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de Horarios Universitarios</title>
+  <style>
+    /* Reinicio de estilos básicos */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background-color: #121212; /* Fondo oscuro para el modo nocturno */
+      color: #E0E0E0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    h1, h2 {
+      color: #F5A623;
+      margin-bottom: 10px;
+    }
+
+    /* Animación de carga personalizada */
+    .loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #121212;
+      color: #E0E0E0;
+      font-size: 2em;
+      animation: fadeOut 1s ease forwards;
+      animation-delay: 1s;
+    }
+
+    @keyframes fadeOut {
+      from { opacity: 1; }
+      to { opacity: 0; }
+    }
+
+    /* Contenedor principal */
+    .dashboard-container {
+      max-width: 1200px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Sección "Ocurriendo Ahora" */
+    .ocurriendo-ahora {
+      background-color: #1E1E1E;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+      opacity: 0;
+      animation: slideDown 1s ease forwards;
+    }
+
+    .ocurriendo-ahora h2 {
+      font-size: 1.5em;
+      margin-bottom: 15px;
+    }
+
+    .contenedor-evento {
+      display: flex;
+      align-items: center;
+      background: #333;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+
+    .logo-evento {
+      width: 30px;
+      height: 30px;
+      margin-right: 10px;
+    }
+
+    .detalles-evento {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .estado {
+      font-size: 0.9em;
+      color: #76FF03;
+    }
+
+    /* Contenedor de lista de clases */
+    .lista-clases {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+
+    .contenedor-clase {
+      width: 250px;
+      background: #252525;
+      border-radius: 10px;
+      padding: 15px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+      opacity: 0;
+      animation: fadeIn 1.5s ease forwards;
+    }
+
+    .encabezado-clase {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1.1em;
+      color: #76FF03;
+    }
+
+    .detalles-clase {
+      margin-top: 10px;
+    }
+
+    .hora-clase {
+      color: #BDBDBD;
+      font-size: 0.9em;
+    }
+
+    .info-clase {
+      margin-top: 5px;
+      font-size: 0.85em;
+      color: #E0E0E0;
+    }
+
+    /* Mensaje de alerta personalizada */
+    .alerta-personalizada {
+      padding: 10px;
+      background-color: #3D5AFE;
+      color: #FFFFFF;
+      border-radius: 5px;
+      text-align: center;
+      margin-top: 15px;
+    }
+
+    /* Diseño responsivo */
+    @media (max-width: 768px) {
+      .contenedor-clase, .ocurriendo-ahora {
+        width: 100%;
+      }
+    }
+
+    /* Animaciones */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideDown {
+      from { transform: translateY(-20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Animación de carga personalizada -->
+  <div class="loading">Cargando el Panel...</div>
+
+  <!-- Contenedor principal del dashboard -->
+  <div class="dashboard-container" style="display:none;">
+    <h1>Panel de Horarios Universitarios</h1>
+
+    <!-- Sección "Ocurriendo Ahora" -->
+    <div class="ocurriendo-ahora">
+      <h2>Ocurriendo Ahora</h2>
+      <div id="eventos-ocurriendo"></div> <!-- Los eventos actuales se añadirán dinámicamente aquí -->
+    </div>
+
+    <!-- Sección de lista de clases -->
+    <h2>Tus Clases y Eventos</h2>
+    <div class="lista-clases" id="lista-clases">
+      <!-- El contenido dinámico se llenará con JavaScript -->
+    </div>
+
+    <!-- Mensaje de alerta personalizada -->
+    <div class="alerta-personalizada">
+      <p>📢 Recordatorio: ¡No te olvides del evento de hoy en el Club de Informática!</p>
+    </div>
+  </div>
+
+  <script>
+    // Simulación de retardo para la carga
+    setTimeout(() => {
+      document.querySelector('.loading').style.display = 'none';
+      document.querySelector('.dashboard-container').style.display = 'block';
+    }, 1500);
+
+    // Datos de eventos en la universidad
+    const eventos = [
+      { nombre: 'Cálculo 101', aula: '203', dias: [1, 3], inicio: '10:00', fin: '11:30', logo: '🧮' },
+      { nombre: 'Laboratorio de Física', aula: '109', dias: [2, 4], inicio: '13:00', fin: '15:00', logo: '🔬' },
+      { nombre: 'Club de Informática', aula: 'Biblioteca', dias: [5], inicio: '11:00', fin: '13:00', logo: '💻' },
+      { nombre: 'Historia 101', aula: '304', dias: [1, 4], inicio: '15:00', fin: '16:00', logo: '📜' },
+      { nombre: 'Tutoría de Matemáticas', aula: 'Biblioteca', dias: [3, 5], inicio: '16:00', fin: '17:00', logo: '📘' },
+      { nombre: 'Grupo de Estudio', aula: 'Sala 101', dias: [6], inicio: '18:00', fin: '20:00', logo: '📚' }
+    ];
+
+    // Obtenemos el día y hora actual
+    const ahora = new Date();
+    const diaActual = ahora.getDay();
+    const horaActual = ahora.toTimeString().slice(0, 5);
+
+    const contenedorOcurriendoAhora = document.getElementById('eventos-ocurriendo');
+    const contenedorListaClases = document.getElementById('lista-clases');
+
+    eventos.forEach(evento => {
+      // Comprobar si el evento ocurre hoy y dentro de la franja horaria actual
+      if (evento.dias.includes(diaActual)) {
+        const [horaInicio, minInicio] = evento.inicio.split(':').map(Number);
+        const [horaFin, minFin] = evento.fin.split(':').map(Number);
+        const horaEventoInicio = new Date();
+        horaEventoInicio.setHours(horaInicio, minInicio, 0);
+        const horaEventoFin = new Date();
+        horaEventoFin.setHours(horaFin, minFin, 0);
+
+        // Crear el ítem de la clase/evento para la lista principal
+        const itemEvento = document.createElement('div');
+        itemEvento.classList.add('contenedor-clase');
+        itemEvento.innerHTML = `
+          <div class="encabezado-clase">
+            <span>${evento.logo} ${evento.nombre}</span>
+            <span>${evento.aula}</span>
+          </div>
+          <div class="detalles-clase">
+            <span class="hora-clase">${evento.inicio} - ${evento.fin}</span>
+            <p class="info-clase">Ubicación: ${evento.aula}</p>
+          </div>
+        `;
+        contenedorListaClases.appendChild(itemEvento);
+
+        // Si el evento está ocurriendo en este momento, lo mostramos en "Ocurriendo Ahora"
+        if (ahora >= horaEventoInicio && ahora <= horaEventoFin) {
+          const itemOcurriendo = document.createElement('div');
+          itemOcurriendo.classList.add('contenedor-evento');
+          itemOcurriendo.innerHTML = `
+            <div class="logo-evento">${evento.logo}</div>
+            <div class="detalles-evento">
+              <span>${evento.nombre}</span>
+              <span class="estado">En progreso</span>
+              <span class="hora-clase">${evento.inicio} - ${evento.fin}</span>
+            </div>
+          `;
+          contenedorOcurriendoAhora.appendChild(itemOcurriendo);
+        }
+      }
+    });
+  </script>
+</body>
+</html>
